@@ -1,0 +1,14 @@
+{
+  "name": "paypal-quickstart",
+  "version": "1.0.0",
+  "description": "PayPal Checkout Quick Start Integration (SDK v6)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "dotenv": "^16.4.7",
+    "@paypal/checkout-server-sdk": "^1.0.3"
+  }
+}
