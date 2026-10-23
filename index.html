@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Adquiere tu VIP</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .profile {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #ffd700;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 10px 0;
+      font-size: 28px;
+    }
+    .price {
+      font-size: 32px;
+      font-weight: bold;
+      color: #ffd700;
+      margin: 15px 0;
+    }
+    #paypal-button-container {
+      margin-top: 25px;
+    }
+    #result-message {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- Cambia la URL de la imagen por la tuya -->
+    <img class="profile" src="https://pbs.twimg.com/profile_images/1978946172409548800/LgwLSYJ3_400x400.jpg" alt="Perfil">
+
+    <h1>Adquiere tu VIP</h1>
+    <p>Acceso exclusivo y beneficios</p>
+    <div class="price">$15.00 USD</div>
+
+    <div id="paypal-button-container"></div>
+    <div id="result-message"></div>
+  </div>
+
+  <!-- Cambia TU_CLIENT_ID_AQUI por tu Client ID -->
+  <script src="https://www.paypal.com/sdk/js?client-id=BAAX9jyHoWsDmOXgjlS-5R-20MU16TdQ29Gjip-4unph8KD-3DG8u4hRRJR0WHwy7Q2fObTCm8zRI2lT-E&currency=USD&enable-funding=card&disable-funding=paylater,venmo"></script>
+
+  <script>
+    paypal.Buttons({
+      style: {
+        layout: 'vertical',
+        color: 'gold',
+        shape: 'rect',
+        label: 'paypal'
+      },
+      createOrder: function(data, actions) {
+        return fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sku: 'vip' })
+        })
+        .then(res => res.json())
+        .then(order => order.id);
+      },
+      onApprove: function(data) {
+        return fetch('/api/orders/' + data.orderID + '/capture', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(details => {
+          document.getElementById('result-message').innerHTML =
+            '<p style="color: #4ade80;">¡Pago completado! Bienvenido al VIP</p>';
+        });
+      },
+      onCancel: function() {
+        document.getElementById('result-message').innerHTML =
+          '<p style="color: orange;">Pago cancelado</p>';
+      },
+      onError: function(err) {
+        console.error(err);
+        document.getElementById('result-message').innerHTML =
+          '<p style="color: red;">Error al procesar el pago</p>';
+      }
+    }).render('#paypal-button-container');
+  </script>
+</body>
+</html>
