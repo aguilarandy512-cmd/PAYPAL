@@ -61,7 +61,9 @@ app.post("/api/orders/:orderId/capture", async (req, res) => {
     res.status(500).json({ error: "Error al capturar el pago" });
   }
 });
-
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
   console.log("Recuerda poner tu Client ID y Secret en el archivo .env");
